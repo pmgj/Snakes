@@ -2,7 +2,18 @@
     margin: 0 auto;
     display: block;
 }
+
 fieldset {
     width: 400px;
     margin: 0 auto;
+}
+
+@media (max-width: 470px) {
+    canvas {
+        width: 95vw;
+    }
+
+    fieldset {
+        width: 88vw;
+    }
 }

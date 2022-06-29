@@ -1,9 +1,9 @@
-import {SnakeGame} from "./model/SnakeGame.js";
-import {State} from "./model/State.js";
-import {Direction} from "./model/Direction.js";
-import {Beginner} from "./difficulty/Beginner.js";
-import {Intermediate} from "./difficulty/Intermediate.js";
-import {Advanced} from "./difficulty/Advanced.js";
+import { SnakeGame } from "./model/SnakeGame.js";
+import { State } from "./model/State.js";
+import { Direction } from "./model/Direction.js";
+import { Beginner } from "./difficulty/Beginner.js";
+import { Intermediate } from "./difficulty/Intermediate.js";
+import { Advanced } from "./difficulty/Advanced.js";
 
 function GUI() {
     let SCREEN_WIDTH, SCREEN_HEIGHT;
@@ -70,14 +70,22 @@ function GUI() {
         message.textContent = `Score: ${game.getFruitConsumed()} | Delay: ${game.getDiff().getDelay()}`;
     }
     function keyPush(evt) {
-        let map = {'ArrowLeft': Direction.LEFT, 'ArrowRight': Direction.RIGHT, 'ArrowUp': Direction.UP, 'ArrowDown': Direction.DOWN};
+        let map = { 'ArrowLeft': Direction.LEFT, 'ArrowRight': Direction.RIGHT, 'ArrowUp': Direction.UP, 'ArrowDown': Direction.DOWN };
         if (game) {
             game.setDirection(map[evt.key]);
         }
     }
+    function touchOccurred(evt) {
+        let x = evt.touches[0].clientX;
+        let y = evt.touches[0].clientY;
+        let direction = y < 100 ? Direction.UP : y > 250 ? Direction.DOWN : x > 250 ? Direction.RIGHT : Direction.LEFT;
+        if (game) {
+            game.setDirection(direction);
+        }
+    }
     function setDifficulty() {
         let select = document.querySelector("select");
-        let diff = {"Beginner": new Beginner(), "Intermediate": new Intermediate(), "Advanced": new Advanced()};
+        let diff = { "Beginner": new Beginner(), "Intermediate": new Intermediate(), "Advanced": new Advanced() };
         game.setDiff(diff[select.value]);
     }
     function registerEvents() {
@@ -87,8 +95,10 @@ function GUI() {
         diff.onchange = setDifficulty;
         resetCanvas();
         document.addEventListener("keydown", keyPush);
+        let canv = document.getElementById("gc");
+        canv.addEventListener("touchstart", touchOccurred);
     }
-    return {registerEvents};
+    return { registerEvents };
 }
 let gui = new GUI();
 gui.registerEvents();
