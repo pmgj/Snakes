@@ -1,104 +1,103 @@
-import { SnakeGame } from "./model/SnakeGame.js";
-import { State } from "./model/State.js";
-import { Direction } from "./model/Direction.js";
-import { Beginner } from "./difficulty/Beginner.js";
-import { Intermediate } from "./difficulty/Intermediate.js";
-import { Advanced } from "./difficulty/Advanced.js";
+import SnakeGame from "./model/SnakeGame.js";
+import State from "./model/State.js";
+import Direction from "./model/Direction.js";
+import Beginner from "./difficulty/Beginner.js";
+import Intermediate from "./difficulty/Intermediate.js";
+import Advanced from "./difficulty/Advanced.js";
 
-function GUI() {
-    let SCREEN_WIDTH, SCREEN_HEIGHT;
-    let UNIT_SIZE = 15;
-    let game, ctx;
-    function startGame() {
-        game = new SnakeGame(SCREEN_HEIGHT / UNIT_SIZE, SCREEN_WIDTH / UNIT_SIZE);
-        game.startGame();
-        setTimeout(paintComponent, game.getDiff().getDelay());
-        setDifficulty();
+class GUI {
+    constructor() {
+        this.game = null;
+        this.canvas = document.getElementById("gc");
+        this.ctx = this.canvas.getContext("2d");
+        this.SCREEN_WIDTH = parseInt(this.canvas.offsetWidth);
+        this.SCREEN_HEIGHT = parseInt(this.canvas.offsetHeight);
+        this.UNIT_SIZE = 15;
     }
-    function resetCanvas() {
-        let canv = document.getElementById("gc");
-        ctx = canv.getContext("2d");
-        SCREEN_WIDTH = parseInt(canv.width);
-        SCREEN_HEIGHT = parseInt(canv.height);
-        ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    startGame() {
+        this.game = new SnakeGame(this.SCREEN_HEIGHT / this.UNIT_SIZE, this.SCREEN_WIDTH / this.UNIT_SIZE);
+        this.game.startGame();
+        setTimeout(this.paintComponent.bind(this), this.game.getDiff().getDelay());
+        this.setDifficulty();
     }
-    function paintComponent() {
-        resetCanvas();
-        game.updateBoard();
-        let state = game.getState();
+    resetCanvas() {
+        this.ctx.clearRect(0, 0, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
+    }
+    paintComponent() {
+        this.resetCanvas();
+        this.game.updateBoard();
+        let state = this.game.getState();
         if (state === State.GAME) {
-            setTimeout(paintComponent, game.getDiff().getDelay());
+            setTimeout(this.paintComponent.bind(this), this.game.getDiff().getDelay());
             // FOOD
-            let food = game.getFruit();
-            ctx.beginPath();
-            ctx.arc(food.getY() * UNIT_SIZE + UNIT_SIZE / 2, food.getX() * UNIT_SIZE + UNIT_SIZE / 2, UNIT_SIZE / 2, 0, 2 * Math.PI);
-            ctx.fillStyle = "magenta";
-            ctx.fill();
+            let food = this.game.getFruit();
+            this.ctx.beginPath();
+            this.ctx.arc(food.getY() * this.UNIT_SIZE + this.UNIT_SIZE / 2, food.getX() * this.UNIT_SIZE + this.UNIT_SIZE / 2, this.UNIT_SIZE / 2, 0, 2 * Math.PI);
+            this.ctx.fillStyle = "magenta";
+            this.ctx.fill();
             // SNAKE
-            let snake = game.getSnake();
+            let snake = this.game.getSnake();
             for (let i = 0, SIZE = snake.length; i < SIZE; i++) {
-                let x = snake[i].getX() * UNIT_SIZE, y = snake[i].getY() * UNIT_SIZE;
+                let x = snake[i].getX() * this.UNIT_SIZE, y = snake[i].getY() * this.UNIT_SIZE;
                 if (i === SIZE - 1) {
                     // TONGUE
-                    let direction = game.getDirection();
-                    ctx.fillStyle = "red";
+                    let direction = this.game.getDirection();
+                    this.ctx.fillStyle = "red";
                     if (direction === Direction.LEFT || direction === Direction.RIGHT) {
-                        ctx.fillRect(y, x + UNIT_SIZE / 2, UNIT_SIZE, UNIT_SIZE / 7);
+                        this.ctx.fillRect(y, x + this.UNIT_SIZE / 2, this.UNIT_SIZE, this.UNIT_SIZE / 7);
                     } else {
-                        ctx.fillRect(y + UNIT_SIZE / 2, x, UNIT_SIZE / 7, UNIT_SIZE);
+                        this.ctx.fillRect(y + this.UNIT_SIZE / 2, x, this.UNIT_SIZE / 7, this.UNIT_SIZE);
                     }
                 } else if (i === SIZE - 2) {
                     // HEAD
-                    ctx.fillStyle = "yellow";
-                    ctx.fillRect(y, x, UNIT_SIZE, UNIT_SIZE);
+                    this.ctx.fillStyle = "yellow";
+                    this.ctx.fillRect(y, x, this.UNIT_SIZE, this.UNIT_SIZE);
                 } else {
                     // BODY
-                    ctx.fillStyle = "green";
-                    ctx.fillRect(y, x, UNIT_SIZE, UNIT_SIZE);
+                    this.ctx.fillStyle = "green";
+                    this.ctx.fillRect(y, x, this.UNIT_SIZE, this.UNIT_SIZE);
                 }
             }
         } else if (state === State.END) {
             // GAME OVER
-            ctx.fillStyle = "red";
-            ctx.font = "60px MV Boli";
-            ctx.fillText("GAME OVER!", SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2);
+            this.ctx.fillStyle = "red";
+            this.ctx.font = "60px MV Boli";
+            this.ctx.fillText("GAME OVER!", this.SCREEN_WIDTH / 2 - 200, this.SCREEN_HEIGHT / 2);
         }
         // SCORE
         let message = document.getElementById("message");
-        message.textContent = `Score: ${game.getFruitConsumed()} | Delay: ${game.getDiff().getDelay()}`;
+        message.textContent = `Score: ${this.game.getFruitConsumed()} | Delay: ${this.game.getDiff().getDelay()}`;
     }
-    function keyPush(evt) {
+    keyPush(evt) {
         let map = { 'ArrowLeft': Direction.LEFT, 'ArrowRight': Direction.RIGHT, 'ArrowUp': Direction.UP, 'ArrowDown': Direction.DOWN };
-        if (game) {
-            game.setDirection(map[evt.key]);
+        if (this.game) {
+            this.game.setDirection(map[evt.key]);
         }
     }
-    function touchOccurred(evt) {
+    touchOccurred(evt) {
         let x = evt.touches[0].clientX;
         let y = evt.touches[0].clientY;
         let direction = y < 100 ? Direction.UP : y > 250 ? Direction.DOWN : x > 250 ? Direction.RIGHT : Direction.LEFT;
-        if (game) {
-            game.setDirection(direction);
+        if (this.game) {
+            this.game.setDirection(direction);
         }
     }
-    function setDifficulty() {
+    setDifficulty() {
         let select = document.querySelector("select");
         let diff = { "Beginner": new Beginner(), "Intermediate": new Intermediate(), "Advanced": new Advanced() };
-        game.setDiff(diff[select.value]);
+        this.game.setDiff(diff[select.value]);
     }
-    function registerEvents() {
+    registerEvents() {
         let startButton = document.querySelector("input[type='button']");
-        startButton.onclick = startGame;
+        startButton.onclick = this.startGame.bind(this);
         let diff = document.querySelector("select");
-        diff.onchange = setDifficulty;
-        resetCanvas();
-        document.addEventListener("keydown", keyPush);
-        let canv = document.getElementById("gc");
-        canv.addEventListener("touchstart", touchOccurred);
+        diff.onchange = this.setDifficulty;
+        this.resetCanvas();
+        document.addEventListener("keydown", this.keyPush.bind(this));
+        this.canvas.addEventListener("touchstart", this.touchOccurred.bind(this));
     }
-    return { registerEvents };
 }
 let gui = new GUI();
 gui.registerEvents();

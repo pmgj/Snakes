@@ -1,5 +1,6 @@
-import {Difficulty} from "./Difficulty.js";
-export class Intermediate extends Difficulty {
+import Difficulty from "./Difficulty.js";
+
+export default class Intermediate extends Difficulty {
     constructor() {
         super(150);
     }

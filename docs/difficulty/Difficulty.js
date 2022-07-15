@@ -1,4 +1,4 @@
-export class Difficulty {
+export default class Difficulty {
     constructor(d) {
         this.delay = d;
     }

@@ -1,117 +1,117 @@
-import {State} from "./State.js";
-import {CellState} from "./CellState.js";
-import {Direction} from "./Direction.js";
-import {Cell} from "./Cell.js";
-import {Beginner} from "../difficulty/Beginner.js";
+import State from "./State.js";
+import CellState from "./CellState.js";
+import Direction from "./Direction.js";
+import Cell from "./Cell.js";
+import Beginner from "../difficulty/Beginner.js";
 
-function SnakeGame(w, h) {
-    var board = Array(w).fill().map(() => Array(h).fill(CellState.EMPTY));
-    var direction;
-    var width = w;
-    var height = h;
-    var snake;
-    var fruit;
-    var state = State.START;
-    var fruitConsumed;
-    var diff = new Beginner();
-    function getFruit() {
-        return fruit;
+export default class SnakeGame {
+    constructor(w, h) {
+        this.board = Array(w).fill().map(() => Array(h).fill(CellState.EMPTY));
+        this.direction = Direction.RIGHT;
+        this.width = w;
+        this.height = h;
+        this.snake;
+        this.fruit;
+        this.state = State.START;
+        this.fruitConsumed;
+        this.diff = new Beginner();
     }
-    function getSnake() {
-        return snake;
+    getFruit() {
+        return this.fruit;
     }
-    function getDirection() {
-        return direction;
+    getSnake() {
+        return this.snake;
     }
-    function startGame() {
-        createSnake();
-        createFruit();
-        state = State.GAME;
-        direction = Direction.RIGHT;
-        fruitConsumed = 0;
-        showBoard();
+    getDirection() {
+        return this.direction;
     }
-    function setDirection(d) {
-        if ((d === Direction.LEFT && direction !== Direction.RIGHT)
-                || (d === Direction.RIGHT && direction !== Direction.LEFT)
-                || (d === Direction.UP && direction !== Direction.DOWN)
-                || (d === Direction.DOWN && direction !== Direction.UP)) {
-            direction = d;
+    startGame() {
+        this.createSnake();
+        this.createFruit();
+        this.state = State.GAME;
+        this.direction = Direction.RIGHT;
+        this.fruitConsumed = 0;
+        this.showBoard();
+    }
+    setDirection(d) {
+        if ((d === Direction.LEFT && this.direction !== Direction.RIGHT)
+            || (d === Direction.RIGHT && this.direction !== Direction.LEFT)
+            || (d === Direction.UP && this.direction !== Direction.DOWN)
+            || (d === Direction.DOWN && this.direction !== Direction.UP)) {
+            this.direction = d;
         }
     }
-    function updateBoard() {
-        if (state === State.GAME) {
-            move();
-            checkFood();
-            if (checkCollision()) {
-                state = State.END;
+    updateBoard() {
+        if (this.state === State.GAME) {
+            this.move();
+            this.checkFood();
+            if (this.checkCollision()) {
+                this.state = State.END;
             }
-            showBoard();
+            this.showBoard();
         }
     }
-    function getFruitConsumed() {
-        return fruitConsumed;
+    getFruitConsumed() {
+        return this.fruitConsumed;
     }
-    function getState() {
-        return state;
+    getState() {
+        return this.state;
     }
-    function getDiff() {
-        return diff;
+    getDiff() {
+        return this.diff;
     }
-    function setDiff(d) {
-        diff = d;
+    setDiff(d) {
+        this.diff = d;
     }
-    function getBoard() {
-        return board;
+    getBoard() {
+        return this.board;
     }
-    function createSnake() {
-        snake = [new Cell(0, 0), new Cell(0, 1), new Cell(0, 2), new Cell(0, 3), new Cell(0, 4)];
+    createSnake() {
+        this.snake = [new Cell(0, 0), new Cell(0, 1), new Cell(0, 2), new Cell(0, 3), new Cell(0, 4)];
     }
-    function createFruit() {
-        fruit = new Cell(Math.floor(Math.random() * width), Math.floor(Math.random() * height));
-        if (snake.some(b => b.equals(fruit))) {
-            createFruit();
+    createFruit() {
+        this.fruit = new Cell(Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height));
+        if (this.snake.some(b => b.equals(this.fruit))) {
+            this.createFruit();
         }
     }
-    function showBoard() {
+    showBoard() {
         // Board
-        for (let i = 0; i < width; i++) {
-            board[i].fill(CellState.EMPTY);
+        for (let i = 0; i < this.width; i++) {
+            this.board[i].fill(CellState.EMPTY);
         }
         // Snake
-        snake.forEach(c => {
-            if (onBoard(c)) {
-                board[c.getX()][c.getY()] = CellState.SNAKE;
+        this.snake.forEach(c => {
+            if (this.onBoard(c)) {
+                this.board[c.getX()][c.getY()] = CellState.SNAKE;
             }
         });
         // Fruit
-        board[fruit.getX()][fruit.getY()] = CellState.FRUIT;
+        this.board[this.fruit.getX()][this.fruit.getY()] = CellState.FRUIT;
     }
-    function onBoard( {x, y}) {
+    onBoard({ x, y }) {
         let inLimit = (value, limit) => value >= 0 && value < limit;
-        return (inLimit(x, board.length) && inLimit(y, board[0].length));
+        return (inLimit(x, this.board.length) && inLimit(y, this.board[0].length));
     }
-    function checkCollision() {
-        let head = snake.slice(-1)[0];
-        let body = snake.slice(0, snake.length - 1);
-        return body.some(b => b.equals(head)) || !onBoard(head);
+    checkCollision() {
+        let head = this.snake.slice(-1)[0];
+        let body = this.snake.slice(0, this.snake.length - 1);
+        return body.some(b => b.equals(head)) || !this.onBoard(head);
     }
-    function checkFood() {
-        let head = snake.slice(-1)[0];
-        if (head.equals(fruit)) {
-            fruitConsumed++;
-            createFruit();
-            diff.changeDelay(fruitConsumed);
+    checkFood() {
+        let head = this.snake.slice(-1)[0];
+        if (head.equals(this.fruit)) {
+            this.fruitConsumed++;
+            this.createFruit();
+            this.diff.changeDelay(this.fruitConsumed);
         } else {
-            snake.shift();
+            this.snake.shift();
         }
     }
-    function move() {
-        let head = snake.slice(-1)[0];
+    move() {
+        let head = this.snake.slice(-1)[0];
         let row = head.getX(), col = head.getY();
-        let map = {DOWN: new Cell(row + 1, col), UP: new Cell(row - 1, col), LEFT: new Cell(row, col - 1), RIGHT: new Cell(row, col + 1)};
-        snake.push(map[direction]);
+        let map = { DOWN: new Cell(row + 1, col), UP: new Cell(row - 1, col), LEFT: new Cell(row, col - 1), RIGHT: new Cell(row, col + 1) };
+        this.snake.push(map[this.direction]);
     }
-    return {getFruit, getSnake, getDirection, startGame, setDirection, updateBoard, getFruitConsumed, getState, getDiff, setDiff, getBoard};
 }
-export {SnakeGame};
