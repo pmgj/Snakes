@@ -1,12 +1,4 @@
-#gc {
-    margin: 0 auto;
-    display: block;
-    width: 480px;
-    height: 420px;
-}
-
-fieldset {
-    width: 455px;
+main {
     margin: 0 auto;
 }
 

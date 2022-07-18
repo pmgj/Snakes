@@ -1,21 +1,25 @@
 import SnakeGame from "./model/SnakeGame.js";
 import State from "./model/State.js";
 import Direction from "./model/Direction.js";
-import Beginner from "./difficulty/Beginner.js";
-import Intermediate from "./difficulty/Intermediate.js";
-import Advanced from "./difficulty/Advanced.js";
+import difficulties from "./difficulty/Difficulties.js";
 
 class GUI {
     constructor() {
         this.game = null;
         this.canvas = document.getElementById("gc");
         this.ctx = this.canvas.getContext("2d");
-        this.SCREEN_WIDTH = parseInt(this.canvas.offsetWidth);
-        this.SCREEN_HEIGHT = parseInt(this.canvas.offsetHeight);
         this.UNIT_SIZE = 15;
+        this.WIDTH = 35;
+        this.HEIGHT = 25;
+        this.SCREEN_WIDTH = this.WIDTH * this.UNIT_SIZE;
+        this.SCREEN_HEIGHT = this.HEIGHT * this.UNIT_SIZE;
+        this.canvas.width = this.SCREEN_WIDTH;
+        this.canvas.height = this.SCREEN_HEIGHT;
+        let main = document.querySelector("main");
+        main.style.width = `${this.SCREEN_WIDTH}px`;
     }
     startGame() {
-        this.game = new SnakeGame(this.SCREEN_HEIGHT / this.UNIT_SIZE, this.SCREEN_WIDTH / this.UNIT_SIZE);
+        this.game = new SnakeGame(this.HEIGHT, this.WIDTH);
         this.game.startGame();
         setTimeout(this.paintComponent.bind(this), this.game.getDiff().getDelay());
         this.setDifficulty();
@@ -86,8 +90,7 @@ class GUI {
     }
     setDifficulty() {
         let select = document.querySelector("select");
-        let diff = { "Beginner": new Beginner(), "Intermediate": new Intermediate(), "Advanced": new Advanced() };
-        this.game.setDiff(diff[select.value]);
+        this.game.setDiff(difficulties[select.value]);
     }
     registerEvents() {
         let startButton = document.querySelector("input[type='button']");
