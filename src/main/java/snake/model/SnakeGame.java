@@ -110,20 +110,16 @@ public class SnakeGame {
         // Snake
         snake.forEach(c -> {
             if (onBoard(c)) {
-                this.board[c.getX()][c.getY()] = CellState.SNAKE;
+                this.board[c.x()][c.y()] = CellState.SNAKE;
             }
         });
         // Fruit
-        this.board[fruit.getX()][fruit.getY()] = CellState.FRUIT;
-        //
-        // for(CellState[] row : this.board) {
-        //     System.out.println(Arrays.toString(row));
-        // }
+        this.board[fruit.x()][fruit.y()] = CellState.FRUIT;
     }
 
     private boolean onBoard(Cell cell) {
         BiFunction<Integer, Integer, Boolean> inLimit = (value, limit) -> value >= 0 && value < limit;
-        return (inLimit.apply(cell.getX(), this.width) && inLimit.apply(cell.getY(), this.height));
+        return (inLimit.apply(cell.x(), this.width) && inLimit.apply(cell.y(), this.height));
     }
 
     private boolean checkCollision() {
@@ -145,20 +141,20 @@ public class SnakeGame {
 
     private void move() {
         Cell head = this.snake.getLast();
-        int row = head.getX(), col = head.getY();
+        int row = head.x(), col = head.y();
         switch (this.direction) {
-            case DOWN:
+            case DOWN -> {
                 row++;
-                break;
-            case UP:
+            }
+            case UP -> {
                 row--;
-                break;
-            case LEFT:
+            }
+            case LEFT -> {
                 col--;
-                break;
-            case RIGHT:
+            }
+            case RIGHT -> {
                 col++;
-                break;
+            }
         }
         head = new Cell(row, col);
         this.snake.add(head);

@@ -61,12 +61,12 @@ public class GamePanel extends JPanel {
             Cell food = game.getFruit();
             // FOOD
             g.setColor(Color.MAGENTA);
-            g.fillOval(food.getY() * UNIT_SIZE, food.getX() * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE);
+            g.fillOval(food.y() * UNIT_SIZE, food.x() * UNIT_SIZE, UNIT_SIZE, UNIT_SIZE);
 
             LinkedList<Cell> snake = game.getSnake();
             // SNAKE
             for (int i = 0, SIZE = snake.size(); i < SIZE; i++) {
-                int x = snake.get(i).getX() * UNIT_SIZE, y = snake.get(i).getY() * UNIT_SIZE;
+                int x = snake.get(i).x() * UNIT_SIZE, y = snake.get(i).y() * UNIT_SIZE;
                 if (i == SIZE - 1) {
                     // TONGUE
                     Direction direction = game.getDirection();
