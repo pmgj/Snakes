@@ -5,24 +5,32 @@
     <title>Snake</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" type="text/css" href="index.css" />
-    <script type="module" src="GUI.js"></script>
+    <script type="module" src="scripts/GUI.js"></script>
 </head>
 
 <body>
-    <main>
+    <main class="mt-3 mx-auto">
+        <h1 class="text-center">Snake</h1>
         <canvas id="gc"></canvas>
-        <fieldset>
-            <legend>Options</legend>
-            <input type="button" value="Start" title="Start the game" />
-            <select title="Set the difficulty of the game">
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-            </select>
-            <p id="message">&nbsp;</p>
-        </fieldset>
+        <form action="#" class="container mb-2">
+            <div class="d-flex justify-content-center mt-2">
+                <div class="p-2">
+                    <input type="button" value="Start" title="Start the game" class="btn btn-primary" />
+                </div>
+                <div class="p-2">
+                    <select title="Set the difficulty of the game" class="form-select">
+                        <option>Beginner</option>
+                        <option>Intermediate</option>
+                        <option>Advanced</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <p id="message" class="text-center">&nbsp;</p>
     </main>
 </body>
 
