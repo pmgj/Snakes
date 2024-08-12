@@ -28,6 +28,13 @@ public class GamePanel extends JPanel {
     private StatusBar statusBar;
     private SnakeGame game;
 
+    Map<Integer, Direction> map = Stream.of(new Object[][] {
+            { KeyEvent.VK_LEFT, Direction.LEFT },
+            { KeyEvent.VK_RIGHT, Direction.RIGHT },
+            { KeyEvent.VK_UP, Direction.UP },
+            { KeyEvent.VK_DOWN, Direction.DOWN }
+    }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (Direction) data[1]));
+
     public void start() {
         game = new SnakeGame(SCREEN_WIDTH / UNIT_SIZE, SCREEN_HEIGHT / UNIT_SIZE);
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -49,6 +56,10 @@ public class GamePanel extends JPanel {
 
     public void setStatusBar(StatusBar s) {
         this.statusBar = s;
+    }
+
+    public void setKey(int key, Direction direction) {
+        map.put(key, direction);
     }
 
     @Override
@@ -102,13 +113,6 @@ public class GamePanel extends JPanel {
     }
 
     private class MyKeyAdapter extends KeyAdapter {
-
-        Map<Integer, Direction> map = Stream.of(new Object[][]{
-            {KeyEvent.VK_LEFT, Direction.LEFT},
-            {KeyEvent.VK_RIGHT, Direction.RIGHT},
-            {KeyEvent.VK_UP, Direction.UP},
-            {KeyEvent.VK_DOWN, Direction.DOWN}
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (Direction) data[1]));
 
         @Override
         public void keyPressed(KeyEvent e) {

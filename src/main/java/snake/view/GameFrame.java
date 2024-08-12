@@ -1,22 +1,29 @@
 package snake.view;
 
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 
 import snake.difficulty.Advanced;
 import snake.difficulty.Beginner;
 import snake.difficulty.Intermediate;
+import snake.model.Direction;
 
 public class GameFrame extends JFrame {
+    private GamePanel panel = new GamePanel();
 
     public void start() {
-        GamePanel panel = new GamePanel();
         panel.start();
         this.setTitle("Snake");
         this.add(panel);
@@ -48,6 +55,10 @@ public class GameFrame extends JFrame {
         menuDiff.add(beginnerItem);
         menuDiff.add(intermedItem);
         menuDiff.add(advancedItem);
+        JMenuItem menuKeys = new JMenuItem("Set Keys");
+        menuKeys.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.ALT_DOWN_MASK));
+        menuKeys.addActionListener(al -> this.showSetKeys());
+        menuOptions.add(menuKeys);
         JMenuItem menuExit = new JMenuItem("Exit");
         menuExit.addActionListener(al -> System.exit(0));
         menuOptions.add(menuExit);
@@ -55,8 +66,35 @@ public class GameFrame extends JFrame {
         StatusBar statusBar = new StatusBar();
         getContentPane().add(statusBar, java.awt.BorderLayout.SOUTH);
         panel.setStatusBar(statusBar);
-        
+
         this.pack();
+    }
+
+    private void showSetKeys() {
+        var dirs = new Direction[] { Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN };
+        for (var direction : dirs) {
+            JDialog d = new JDialog(this, "Set Keys", ModalityType.DOCUMENT_MODAL);
+            d.setLocationRelativeTo(this);
+            d.setLayout(new FlowLayout());
+            d.addKeyListener(new KeyAdapter() {
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    panel.setKey(e.getKeyCode(), direction);
+                    d.dispose();
+                }
+            });
+            // create a label
+            JLabel l = new JLabel("Inform the " + direction + " key...");
+            l.setHorizontalTextPosition(SwingConstants.CENTER);
+            l.setVerticalTextPosition(SwingConstants.CENTER);
+            d.add(l);
+            // setsize of dialog
+            d.setSize(200, 100);
+            // set visibility of dialog
+            d.setVisible(true);
+            d.setFocusable(true);
+        }
     }
 
     public static void main(String[] args) {
